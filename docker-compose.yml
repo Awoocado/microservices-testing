@@ -1,0 +1,63 @@
+version: "3.9"
+services:
+  redis:
+    image: redis:alpine
+    container_name: ms-redis
+    ports:
+      - 6379:6379
+
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    container_name: ms-rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  cache:
+    build: ./cache
+    env_file: .env
+    container_name: ms-cache
+    image: node:16-alpine
+    working_dir: /code
+    entrypoint: /bin/sh
+    stdin_open: true
+    tty: true
+    volumes:
+    - ./cache/:/code
+    ports:
+      - 5000:5000
+    depends_on:
+      - redis
+      - rabbitmq
+
+  rest:
+    build: ./rest
+    env_file: .env
+    container_name: ms-rest
+    image: node:16-alpine
+    working_dir: /code
+    entrypoint: /bin/sh
+    stdin_open: true
+    tty: true
+    volumes:
+    - ./rest/:/code
+    depends_on:
+      - redis
+      - rabbitmq
+
+  gateway:
+    build: ./gateway
+    env_file: .env
+    container_name: ms-gateway
+    image: node:16-alpine
+    working_dir: /code
+    entrypoint: /bin/sh
+    stdin_open: true
+    tty: true
+    volumes:
+    - ./gateway/:/code
+    depends_on:
+      - cache
+      - redis
+      - rabbitmq
+

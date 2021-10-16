@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "amqp": "^0.2.7",
+    "amqplib": "^0.8.0",
+    "raincache": "^0.4.1",
+    "snowtransfer": "^0.3.1",
+    "stargear": "github:DasWolke/StarGear"
+  }
+}
