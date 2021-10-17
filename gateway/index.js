@@ -1,5 +1,6 @@
 const { Client } = require("cloudstorm")
-const amqp = require("amqp")
+const zmq = require("zeromq")
+sock = zmq.socket("push")
 
 const bot = new Client(process.env.DISCORD_TOKEN, {
 	initialPresence: { status: "online", activities: [{ name: "Wolking on Sunshine" }]},
@@ -11,15 +12,14 @@ const bot = new Client(process.env.DISCORD_TOKEN, {
 
 
 const startup = async () => {
-	const connection = amqp.createConnection({ host: process.env.RABBITMQ_HOST })
-	connection.on("ready", async () => {
-		await bot.connect()
-		bot.on("event", (event) => {
-			connection.publish("test-pre-cache", event)
-		})
+	sock.bindSync("tcp://*:10200")
+	await bot.connect()
+
+	bot.on("event", (event) => {
+		console.log(event)
+		sock.send(JSON.stringify(event))
 	})
 
-	connection.on("error", e => console.error(e))
 	bot.on("ready", () => console.log("Bot is ready"))
 }
 

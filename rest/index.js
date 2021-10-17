@@ -1,6 +1,6 @@
 const StarGear = require('stargear')
 const RainCache = require('raincache')
-const AmqpConnector = StarGear.Connectors.AmqpConnector
+const { ZMQPullConnector } = require("./handmade")
 let RedisEngine = RainCache.Engines.RedisStorageEngine
 
 let bot = new StarGear({
@@ -11,7 +11,7 @@ let bot = new StarGear({
       debug: false}),
     token: process.env.DISCORD_TOKEN
   },
-  new AmqpConnector({ amqpUrl: `amqp://${process.env.RABBITMQ_HOST}` })
+  new ZMQPullConnector({ zmqUrl: 'tcp://cache:10300' })
 )
 
 bot.on('messageCreate', async (msg) => {
@@ -19,8 +19,8 @@ bot.on('messageCreate', async (msg) => {
   console.log(`#${channel.name}: ${msg.author.username}#${msg.author.discriminator}: ${msg.content}`)
   if (msg.content === '!ping') {
     let time = Date.now()
-    let pingMsg = await bot.rest.channel.createMessage(msg.channel_id, 'pong');
-    return bot.rest.channel.editMessage(msg.channel_id, pingMsg.id, `pong \`${Date.now() - time}ms\``)
+    let pingMsg = await bot.rest.channel.createMessage(msg.channel_id, 'Pong?');
+    return bot.rest.channel.editMessage(msg.channel_id, pingMsg.id, `Pong \`${Date.now() - time}ms\`!`)
   }
 })
 

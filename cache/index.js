@@ -1,20 +1,18 @@
 let RainCache = require('raincache')
-let AmqpConnector = RainCache.Connectors.AmqpConnector
 let Redis = RainCache.Engines.RedisStorageEngine
-let con = new AmqpConnector({ amqpUrl: `amqp://${process.env.RABBITMQ_HOST}` })
+let { ZMQPullConnector, ZMQPushConnector } = require("./handmade")
 
 let cache = new RainCache({
   storage: { default: new Redis({ host: process.env.REDIS_HOST }) },
   debug: false
-}, con, con)
+}, 
+new ZMQPullConnector({ zmqUrl: 'tcp://gateway:10200' }),
+new ZMQPushConnector({ zmqUrl: 'tcp://*:10300' }))
 
 let init = async () => {
   await cache.initialize()
 }
 
-cache.on('debug', (data) => {
-  console.log(data)
-})
 init().then(async () => {
   console.log('Cache iniciado')
 }).catch(e => console.error(e))

@@ -6,12 +6,12 @@ services:
     ports:
       - 6379:6379
 
-  rabbitmq:
-    image: rabbitmq:management-alpine
-    container_name: ms-rabbitmq
-    ports:
-      - 5672:5672
-      - 15672:15672
+  #   rabbitmq:
+  #     image: rabbitmq:management-alpine
+  #     container_name: ms-rabbitmq
+  #     ports:
+  #       - 5672:5672
+  #       - 15672:15672
 
   cache:
     build: ./cache
@@ -24,11 +24,9 @@ services:
     tty: true
     volumes:
     - ./cache/:/code
-    ports:
-      - 5000:5000
     depends_on:
       - redis
-      - rabbitmq
+    #  - rabbitmq
 
   rest:
     build: ./rest
@@ -43,7 +41,7 @@ services:
     - ./rest/:/code
     depends_on:
       - redis
-      - rabbitmq
+    #  - rabbitmq
 
   gateway:
     build: ./gateway
@@ -59,5 +57,4 @@ services:
     depends_on:
       - cache
       - redis
-      - rabbitmq
-
+    #  - rabbitmq
