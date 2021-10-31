@@ -1,6 +1,5 @@
 const { Client } = require("cloudstorm")
-const zmq = require("zeromq")
-sock = zmq.socket("push")
+const sock = require("zeromq").socket("push")
 
 const bot = new Client(process.env.DISCORD_TOKEN, {
 	initialPresence: { status: "online", activities: [{ name: "Wolking on Sunshine" }]},
@@ -16,7 +15,6 @@ const startup = async () => {
 	await bot.connect()
 
 	bot.on("event", (event) => {
-		console.log(event)
 		sock.send(JSON.stringify(event))
 	})
 

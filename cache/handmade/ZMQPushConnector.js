@@ -1,16 +1,15 @@
-'use strict';
-const RainCache = require('raincache')
+'use strict'
 const BaseConnector = require("../node_modules/raincache/src/connector/BaseConnector")
 
 /**
- * Zeromq Connector, used for receiving and sending messages to an amqp based message queue
+ * Zeromq Connector, used for sending messages
  * @extends BaseConnector
  */
 class ZMQPushConnector extends BaseConnector {
     /**
      * Create a new ZeroMQ Connector
      * @param {Object} options - Options
-     * @param {String} [options.zmqUrl=tcp://*:10300] - zmq host to connect to
+     * @param {String} [options.zmqUrl=tcp://*:10300] - zmq port to connect to
      */
     constructor(options) {
         super()
@@ -21,7 +20,7 @@ class ZMQPushConnector extends BaseConnector {
     }
 
     /**
-     * Initializes the connector by creating a new connection to the amqp host set via config and creating a new queue to receive messages from
+     * Initializes the connector
      * @returns {Promise.<void>}
      */
     async initialize() {
@@ -34,7 +33,7 @@ class ZMQPushConnector extends BaseConnector {
      * @param {Object} event - event that should be forwarded, has to be JSON.stringify-able
      * @returns {Promise.<void>}
      */
-     async send(event) {
+    async send(event) {
         this.client.send(JSON.stringify(event))
     }
 }
